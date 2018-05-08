@@ -2,12 +2,14 @@ package com.example.kadir.notdefteriuygulamasi;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,9 +17,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.kadir.notdefteriuygulamasi.data.DatabaseHelper;
 import com.example.kadir.notdefteriuygulamasi.data.NotDefteriContract;
+import com.example.kadir.notdefteriuygulamasi.data.NotDefteriContract.NotlarEntry;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         notOlustur();
+        notlariOku();
 
         spinner = findViewById(R.id.spinner);
         lvNot = findViewById(R.id.lvNot);
@@ -62,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -114,5 +120,37 @@ public class MainActivity extends AppCompatActivity {
         long id = db.insert(NotDefteriContract.NotlarEntry.TABLE_NAME,null,yenikayit);
 
 
+    }
+
+    private void notlariOku() {
+        DatabaseHelper helper = new DatabaseHelper(this);
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        String[] projection = {NotlarEntry.COLUMN_NOTE_ICERIK,
+                            NotlarEntry.COLUMN_OLUSTURMA_TARİHİ,
+                            NotlarEntry.COLUMN_BITIS_TARIHI,
+                            NotlarEntry.COLUMN_YAPILDI,
+                            NotlarEntry.COLUMN_KATEGORI_ID};
+
+        String selection = NotlarEntry.COLUMN_KATEGORI_ID + " = ?";
+        String[] selectionArgs = {"1"};
+
+        Cursor c = db.query(NotlarEntry.TABLE_NAME,projection,selection,selectionArgs,null,null,null,null);
+
+        int i = c.getCount();
+        Toast.makeText(this, "Satır Sayısı : "+i, Toast.LENGTH_SHORT).show();
+
+        String tumNotlar = "";
+        while(c.moveToNext()){
+
+            for(int j=0; j<=4 ; j++){
+                tumNotlar += c.getString(j) + " - ";
+            }
+            tumNotlar += "\n";
+        }
+
+        Log.e("VERİLER : ",tumNotlar);
+        c.close();
+        db.close();
     }
 }
