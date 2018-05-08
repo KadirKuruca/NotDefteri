@@ -1,6 +1,7 @@
 package com.example.kadir.notdefteriuygulamasi;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,6 +14,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+
+import com.example.kadir.notdefteriuygulamasi.data.DatabaseHelper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,6 +31,10 @@ public class MainActivity extends AppCompatActivity {
 
         spinner = findViewById(R.id.spinner);
         lvNot = findViewById(R.id.lvNot);
+
+        //DatabaseHelper sınıfını kullanmak için nesne oluşturduk.
+        DatabaseHelper helper = new DatabaseHelper(this);
+        SQLiteDatabase db = helper.getReadableDatabase();
 
         String[] notIcerik = getResources().getStringArray(R.array.notlar);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,R.layout.not_tek_satir, R.id.tvNotIcerik, notIcerik);
