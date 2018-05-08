@@ -1,5 +1,6 @@
 package com.example.kadir.notdefteriuygulamasi;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.example.kadir.notdefteriuygulamasi.data.DatabaseHelper;
+import com.example.kadir.notdefteriuygulamasi.data.NotDefteriContract;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,12 +31,11 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        notOlustur();
+
         spinner = findViewById(R.id.spinner);
         lvNot = findViewById(R.id.lvNot);
 
-        //DatabaseHelper sınıfını kullanmak için nesne oluşturduk.
-        DatabaseHelper helper = new DatabaseHelper(this);
-        SQLiteDatabase db = helper.getReadableDatabase();
 
         String[] notIcerik = getResources().getStringArray(R.array.notlar);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,R.layout.not_tek_satir, R.id.tvNotIcerik, notIcerik);
@@ -86,5 +87,32 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void notOlustur(){
+
+        DatabaseHelper helper = new DatabaseHelper(this);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        String insertSorgusu = "INSERT INTO notlar ("
+                + NotDefteriContract.NotlarEntry.COLUMN_NOTE_ICERIK + ","
+                + NotDefteriContract.NotlarEntry.COLUMN_KATEGORI_ID + ","
+                + NotDefteriContract.NotlarEntry.COLUMN_OLUSTURMA_TARİHİ + ","
+                + NotDefteriContract.NotlarEntry.COLUMN_BITIS_TARIHI + ","
+                + NotDefteriContract.NotlarEntry.COLUMN_YAPILDI + ")"
+                + " VALUES (\"SPORA GIT\", 1, \"07-05-2018\",\"\",0)";
+
+        db.execSQL(insertSorgusu); // Bu geriye bir şey döndürmediği için tavsiye edilmez.
+
+        ContentValues yenikayit = new ContentValues(); // Bu şekilde veri ekleme tavsiye edilir. Geriye long tipinde değer döndürür.
+        yenikayit.put(NotDefteriContract.NotlarEntry.COLUMN_NOTE_ICERIK,"OKULA GİT");
+        yenikayit.put(NotDefteriContract.NotlarEntry.COLUMN_KATEGORI_ID, 1);
+        yenikayit.put(NotDefteriContract.NotlarEntry.COLUMN_OLUSTURMA_TARİHİ, "06-05-2018");
+        yenikayit.put(NotDefteriContract.NotlarEntry.COLUMN_BITIS_TARIHI, "09-05-2018");
+        yenikayit.put(NotDefteriContract.NotlarEntry.COLUMN_YAPILDI, 0);
+
+        long id = db.insert(NotDefteriContract.NotlarEntry.TABLE_NAME,null,yenikayit);
+
+
     }
 }
