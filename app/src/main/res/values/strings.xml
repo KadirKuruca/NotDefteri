@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">NotDefteriUygulamasi</string>
+    <string name="action_settings">Ayarlar</string>
+    <string name="kategoriler">Kategoriler</string>
+    <string-array name="kategoriler">
+        <item>Genel</item>
+        <item>iş</item>
+        <item>Okul</item>
+        <item>Aile</item>
+    </string-array>
+
+    <string-array name="notlar">
+        <item>Okula Git</item>
+        <item>İşe Git</item>
+        <item>Markete Git</item>
+        <item>Faturaları Öde</item>
+    </string-array>
+</resources>
