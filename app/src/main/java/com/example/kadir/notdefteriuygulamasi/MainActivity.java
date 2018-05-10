@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         notOlustur();
+        notGuncelle();
+        notSil();
         notlariOku();
 
         spinner = findViewById(R.id.spinner);
@@ -126,7 +128,8 @@ public class MainActivity extends AppCompatActivity {
         DatabaseHelper helper = new DatabaseHelper(this);
         SQLiteDatabase db = helper.getReadableDatabase();
 
-        String[] projection = {NotlarEntry.COLUMN_NOTE_ICERIK,
+        String[] projection = {NotlarEntry._ID,
+                            NotlarEntry.COLUMN_NOTE_ICERIK,
                             NotlarEntry.COLUMN_OLUSTURMA_TARİHİ,
                             NotlarEntry.COLUMN_BITIS_TARIHI,
                             NotlarEntry.COLUMN_YAPILDI,
@@ -152,5 +155,30 @@ public class MainActivity extends AppCompatActivity {
         Log.e("VERİLER : ",tumNotlar);
         c.close();
         db.close();
+    }
+
+    private void notGuncelle() {
+
+        DatabaseHelper helper = new DatabaseHelper(this);
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        ContentValues guncellenen = new ContentValues();
+        guncellenen.put(NotlarEntry.COLUMN_NOTE_ICERIK,"Not Güncellendi.");
+        String[] args = {"5"};
+
+        int etkilenenSatirSayisi = db.update(NotlarEntry.TABLE_NAME,guncellenen,NotlarEntry._ID + "= ?",args);
+        Toast.makeText(this, "Guncellenen Satır Sayısı : "+etkilenenSatirSayisi, Toast.LENGTH_SHORT).show();
+    }
+
+    private void notSil(){
+
+        DatabaseHelper helper = new DatabaseHelper(this);
+        SQLiteDatabase db = helper.getReadableDatabase();
+        int silinenSatirSayisi = 0;
+        for(int i=20; i<=28;i++){
+            String[] args = {String.valueOf(i)};
+            silinenSatirSayisi += db.delete(NotlarEntry.TABLE_NAME, NotlarEntry._ID + "= ?",args);
+        }
+        Toast.makeText(this, "Silinen Satır Sayısı = "+silinenSatirSayisi, Toast.LENGTH_SHORT).show();
     }
 }
