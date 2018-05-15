@@ -21,6 +21,11 @@
         </activity>
         <activity android:name=".KategoriActivity" />
         <activity android:name=".NotActivity"></activity>
+        <provider
+            android:authorities="com.example.kadir.notdefteriuygulamasi.notdefteriprovider"
+            android:name=".data.NotDefteriProvider"
+            android:exported="false">
+        </provider>
     </application>
 
 </manifest>

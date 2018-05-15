@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import com.example.kadir.notdefteriuygulamasi.data.DatabaseHelper;
 import com.example.kadir.notdefteriuygulamasi.data.NotDefteriContract;
 import com.example.kadir.notdefteriuygulamasi.data.NotDefteriContract.NotlarEntry;
+import com.example.kadir.notdefteriuygulamasi.data.NotDefteriContract.KategoriEntry;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,10 +37,11 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        notOlustur();
+        /*notOlustur();
         notGuncelle();
         notSil();
-        notlariOku();
+        notlariOku();*/
+        kategoriEkle();
 
         spinner = findViewById(R.id.spinner);
         lvNot = findViewById(R.id.lvNot);
@@ -105,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         String insertSorgusu = "INSERT INTO notlar ("
                 + NotDefteriContract.NotlarEntry.COLUMN_NOTE_ICERIK + ","
                 + NotDefteriContract.NotlarEntry.COLUMN_KATEGORI_ID + ","
-                + NotDefteriContract.NotlarEntry.COLUMN_OLUSTURMA_TARİHİ + ","
+                + NotDefteriContract.NotlarEntry.COLUMN_OLUSTURMA_TARIHI + ","
                 + NotDefteriContract.NotlarEntry.COLUMN_BITIS_TARIHI + ","
                 + NotDefteriContract.NotlarEntry.COLUMN_YAPILDI + ")"
                 + " VALUES (\"SPORA GIT\", 1, \"07-05-2018\",\"\",0)";
@@ -115,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         ContentValues yenikayit = new ContentValues(); // Bu şekilde veri ekleme tavsiye edilir. Geriye long tipinde değer döndürür.
         yenikayit.put(NotDefteriContract.NotlarEntry.COLUMN_NOTE_ICERIK,"OKULA GİT");
         yenikayit.put(NotDefteriContract.NotlarEntry.COLUMN_KATEGORI_ID, 1);
-        yenikayit.put(NotDefteriContract.NotlarEntry.COLUMN_OLUSTURMA_TARİHİ, "06-05-2018");
+        yenikayit.put(NotDefteriContract.NotlarEntry.COLUMN_OLUSTURMA_TARIHI, "06-05-2018");
         yenikayit.put(NotDefteriContract.NotlarEntry.COLUMN_BITIS_TARIHI, "09-05-2018");
         yenikayit.put(NotDefteriContract.NotlarEntry.COLUMN_YAPILDI, 0);
 
@@ -130,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
 
         String[] projection = {NotlarEntry._ID,
                             NotlarEntry.COLUMN_NOTE_ICERIK,
-                            NotlarEntry.COLUMN_OLUSTURMA_TARİHİ,
+                            NotlarEntry.COLUMN_OLUSTURMA_TARIHI,
                             NotlarEntry.COLUMN_BITIS_TARIHI,
                             NotlarEntry.COLUMN_YAPILDI,
                             NotlarEntry.COLUMN_KATEGORI_ID};
@@ -180,5 +183,14 @@ public class MainActivity extends AppCompatActivity {
             silinenSatirSayisi += db.delete(NotlarEntry.TABLE_NAME, NotlarEntry._ID + "= ?",args);
         }
         Toast.makeText(this, "Silinen Satır Sayısı = "+silinenSatirSayisi, Toast.LENGTH_SHORT).show();
+    }
+
+    private void kategoriEkle(){
+
+        ContentValues values = new ContentValues();
+        values.put(KategoriEntry.COLUMN_KATEGORI,"Deneme");
+        Uri _uri = getContentResolver().insert(KategoriEntry.CONTENT_URI,values);
+        Toast.makeText(this, "Kategori Eklendi : "+_uri, Toast.LENGTH_LONG).show();
+
     }
 }

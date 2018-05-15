@@ -10,23 +10,23 @@ import com.example.kadir.notdefteriuygulamasi.data.NotDefteriContract.NotlarEntr
 public class DatabaseHelper extends SQLiteOpenHelper{
 
     public static final String DATABASE_NAME = "notdefterim.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
-    private static final String TABLE_KATEGORILER_CREATE =
+    private static final String TABLE_KATEGORILER_CREATE=
             "CREATE TABLE " + KategoriEntry.TABLE_NAME + " ("+
                     KategoriEntry._ID + " INTEGER PRIMARY KEY, "+
-                    KategoriEntry.COLUMN_KATEGORI + "TEXT)";
+                    KategoriEntry.COLUMN_KATEGORI + " TEXT)";
 
-    private static final String TABLE_NOTLAR_CREATE =
+    private static final String TABLE_NOTLAR_CREATE=
             "CREATE TABLE " + NotlarEntry.TABLE_NAME + " ("+
-                    NotlarEntry._ID + " INTEGER PRIMARY KEY,"+
-                    NotlarEntry.COLUMN_NOTE_ICERIK + " TEXT, "+
-                    NotlarEntry.COLUMN_OLUSTURMA_TARİHİ + " TEXT DEFAULT CURRENT_TIMESTAMP, "+
-                    NotlarEntry.COLUMN_BITIS_TARIHI + " TEXT, "+
-                    NotlarEntry.COLUMN_YAPILDI + " INTEGER, "+
-                    NotlarEntry.COLUMN_KATEGORI_ID + " INTEGER, "+
-                    "FOREIGN KEY ( " +NotlarEntry.COLUMN_KATEGORI_ID +")" + " REFERENCES "+ KategoriEntry.TABLE_NAME +
-                    "("+KategoriEntry._ID + ") " + ")";
+                    NotlarEntry._ID + " INTEGER PRIMARY KEY, "+
+                    NotlarEntry.COLUMN_NOTE_ICERIK + " TEXT, " +
+                    NotlarEntry.COLUMN_OLUSTURMA_TARIHI + " TEXT DEFAULT CURRENT_TIMESTAMP, "+
+                    NotlarEntry.COLUMN_BITIS_TARIHI +  " TEXT,"+
+                    NotlarEntry.COLUMN_YAPILDI + " INTEGER," +
+                    NotlarEntry.COLUMN_KATEGORI_ID + " INTEGER,"+
+                    " FOREIGN KEY ( "+ NotlarEntry.COLUMN_KATEGORI_ID + ")" + " REFERENCES "+ KategoriEntry.TABLE_NAME +
+                    "("+ KategoriEntry._ID + ") " + ")";
 
 
 
