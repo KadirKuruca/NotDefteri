@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,7 +38,28 @@ public class NotDefteriProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-        return null;
+
+        //İki Tabloyu birleştirme işlemi yapılıyor.
+
+        SQLiteQueryBuilder builder;
+        String tabloBirlestir = "notlar inner join kategoriler on notlar.kategoriID = kategoriler._id";
+
+        Cursor cursor;
+        switch (matcher.match(uri)){
+            case URICODE_NOTLAR:
+                builder = new SQLiteQueryBuilder();
+                builder.setTables(tabloBirlestir);
+                cursor = builder.query(db,projection,selection,selectionArgs,null,null,null);
+                break;
+
+            case URICODE_KATEGORILER:
+                cursor = db.query(NotDefteriContract.KategoriEntry.TABLE_NAME,projection,selection,selectionArgs,null,null,null);
+                break;
+            default:
+                throw new IllegalArgumentException("Bilinmeyen Uri : "+uri);
+        }
+
+        return cursor;
     }
 
     @Nullable

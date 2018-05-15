@@ -41,7 +41,10 @@ public class MainActivity extends AppCompatActivity {
         notGuncelle();
         notSil();
         notlariOku();*/
-        kategoriEkle();
+        //kategoriEkle();
+        //kategoriGoster();
+        //notEkle();
+        notlariGoster();
 
         spinner = findViewById(R.id.spinner);
         lvNot = findViewById(R.id.lvNot);
@@ -192,5 +195,53 @@ public class MainActivity extends AppCompatActivity {
         Uri _uri = getContentResolver().insert(KategoriEntry.CONTENT_URI,values);
         Toast.makeText(this, "Kategori Eklendi : "+_uri, Toast.LENGTH_LONG).show();
 
+    }
+
+    private void kategoriGoster(){
+
+        String[] projection = {"_id","kategori"};
+        String tumKategoriler="";
+
+        Cursor cursor = getContentResolver().query(KategoriEntry.CONTENT_URI,projection,null,null,null);
+
+        while(cursor.moveToNext()){
+
+            String id = cursor.getString(0);
+            String kategori = cursor.getString(1);
+
+            tumKategoriler = tumKategoriler+"id : "+id+" kategori : "+kategori+"\n";
+        }
+
+        Toast.makeText(this, ""+tumKategoriler, Toast.LENGTH_SHORT).show();
+    }
+
+    private void notEkle() {
+        ContentValues values = new ContentValues();
+        values.put(NotlarEntry.COLUMN_NOTE_ICERIK,"Yeni Eklenen Not1");
+        values.put(NotlarEntry.COLUMN_KATEGORI_ID,1);
+        values.put(NotlarEntry.COLUMN_OLUSTURMA_TARIHI,"16-05-2018");
+        values.put(NotlarEntry.COLUMN_BITIS_TARIHI,"18-05-2018");
+        values.put(NotlarEntry.COLUMN_YAPILDI,0);
+
+        Uri _uri = null;
+        _uri = getContentResolver().insert(NotlarEntry.CONTENT_URI,values);
+        if(_uri != null){
+            Toast.makeText(this, "Not Kaydedildi."+_uri, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void notlariGoster(){
+        String[] projection={"notlar._id","notlar.notIcerik","notlar.olusturulmaTarihi","kategoriler._id","kategoriler.kategori"};
+        Cursor cursor = getContentResolver().query(NotlarEntry.CONTENT_URI,projection,null,null,null);
+
+        String tumNotlar = "";
+        while(cursor.moveToNext()){
+            for(int i=0;i<=4;i++){
+                tumNotlar = tumNotlar+cursor.getString(i)+" - ";
+            }
+            tumNotlar = tumNotlar+"\n";
+        }
+        Toast.makeText(this, ""+tumNotlar, Toast.LENGTH_SHORT).show();
+        Log.e("NOTLAR : ",""+tumNotlar);
     }
 }
