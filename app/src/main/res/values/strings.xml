@@ -2,6 +2,8 @@
     <string name="app_name">NotDefteriUygulamasi</string>
     <string name="action_settings">Ayarlar</string>
     <string name="kategoriler">Kategoriler</string>
+    <string name="t_m_kategorileri_sil">Tüm Kategorileri Sil</string>
+    <string name="tum_notlar_sil">Tüm Notları Sil</string>
     <string-array name="kategoriler">
         <item>Genel</item>
         <item>iş</item>

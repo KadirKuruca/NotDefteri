@@ -7,6 +7,19 @@
         android:orderInCategory="100"
         android:title="@string/kategoriler"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_kategorileri_sil"
+        android:orderInCategory="101"
+        android:title="@string/t_m_kategorileri_sil"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_notlari_sil"
+        android:orderInCategory="102"
+        android:title="@string/tum_notlar_sil"
+        app:showAsAction="never" />
+
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"

@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
     Spinner spinner;
     ListView lvNot;
+    private static final int TUM_NOTLAR = -1;
+    private static final int TUM_KATEGORILER = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         //kategoriEkle();
         //kategoriGoster();
         //notEkle();
+        //notlariGuncelle();
         notlariGoster();
 
         spinner = findViewById(R.id.spinner);
@@ -98,6 +101,19 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_kategori){
             Intent intent = new Intent(this,KategoriActivity.class);
             startActivity(intent);
+            return true;
+        }
+
+        if(id == R.id.action_kategorileri_sil){
+            kategorileriSil(TUM_KATEGORILER);
+            //kategoriGoster();
+            return true;
+        }
+
+        if(id == R.id.action_notlari_sil){
+            notlariSil(TUM_NOTLAR);
+            //notlariGoster();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -243,5 +259,47 @@ public class MainActivity extends AppCompatActivity {
         }
         Toast.makeText(this, ""+tumNotlar, Toast.LENGTH_SHORT).show();
         Log.e("NOTLAR : ",""+tumNotlar);
+    }
+
+    private void notlariGuncelle(){
+
+        ContentValues values = new ContentValues();
+        values.put(NotlarEntry.COLUMN_NOTE_ICERIK,"Update Edilen Not");
+        values.put(NotlarEntry.COLUMN_KATEGORI_ID,1);
+        values.put(NotlarEntry.COLUMN_OLUSTURMA_TARIHI,17-05-2018);
+        values.put(NotlarEntry.COLUMN_BITIS_TARIHI,19-05-2018);
+        values.put(NotlarEntry.COLUMN_YAPILDI,1);
+
+        int etkilenenSatir = getContentResolver().update(NotlarEntry.CONTENT_URI,values, "_id = ?",new String[]{"5"});
+        if(etkilenenSatir != 0){
+            Toast.makeText(this, "Not Silindi : "+etkilenenSatir, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void notlariSil(int silinecekID){
+
+        String[] args = {String.valueOf(silinecekID)};
+
+        if(silinecekID == TUM_NOTLAR){
+            args = null;
+        }
+
+        int silinenSatir = getContentResolver().delete(NotlarEntry.CONTENT_URI,"_id=?", args);
+        if(silinenSatir != 0){
+            Toast.makeText(this, "Satırlar Silindi : "+silinenSatir, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void kategorileriSil(int silinecekID){
+
+        String[] args = {String.valueOf(silinecekID)};
+        if(silinecekID == TUM_KATEGORILER){
+            args = null;
+        }
+
+        int silinenSatir = getContentResolver().delete(KategoriEntry.CONTENT_URI,"_id = ?", args);
+        if(silinenSatir != 0){
+            Toast.makeText(this, "Satırlar Silindi : "+silinenSatir, Toast.LENGTH_SHORT).show();
+        }
     }
 }

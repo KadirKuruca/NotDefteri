@@ -84,12 +84,31 @@ public class NotDefteriProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+
+        switch (matcher.match(uri)){
+
+            case URICODE_NOTLAR :
+                return kayitSil(uri,selection,selectionArgs, NotDefteriContract.NotlarEntry.TABLE_NAME);
+            case URICODE_KATEGORILER:
+                return kayitSil(uri,selection,selectionArgs, NotDefteriContract.KategoriEntry.TABLE_NAME);
+
+            default:
+                throw new IllegalArgumentException("Bilinmeyen Uri : "+uri);
+        }
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+
+        switch (matcher.match(uri)){
+            case URICODE_NOTLAR:
+                return kayitGuncelle(uri,values,selection,selectionArgs, NotDefteriContract.NotlarEntry.TABLE_NAME);
+            case URICODE_KATEGORILER:
+                return kayitGuncelle(uri,values,selection,selectionArgs, NotDefteriContract.KategoriEntry.TABLE_NAME);
+
+            default:
+                throw new IllegalArgumentException("Bilinmeyen Uri : "+uri);
+        }
     }
 
     private Uri kayitEkle(Uri uri, ContentValues values, String tableName){
@@ -101,5 +120,26 @@ public class NotDefteriProvider extends ContentProvider {
         }
 
         return ContentUris.withAppendedId(uri,id);
+    }
+
+    private int kayitGuncelle(Uri uri, ContentValues values,String selection,String[] selectionArgs,String tabloAdi){
+
+        int id = db.update(tabloAdi,values,selection,selectionArgs);
+        if(id == 0)
+        {
+            Log.e("HATA","UPDATE HATASI");
+            return -1;
+        }
+        return id;
+    }
+
+    private int kayitSil(Uri uri,String selection,String[] selectionArgs, String tabloAdi){
+
+        int id = db.delete(tabloAdi,selection,selectionArgs);
+        if(id == 0){
+            Log.e("HATA","DELETE HATASI");
+            return -1;
+        }
+        return id;
     }
 }
