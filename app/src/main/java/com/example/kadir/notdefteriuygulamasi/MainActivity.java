@@ -24,6 +24,7 @@ import com.example.kadir.notdefteriuygulamasi.data.DatabaseHelper;
 import com.example.kadir.notdefteriuygulamasi.data.NotDefteriContract;
 import com.example.kadir.notdefteriuygulamasi.data.NotDefteriContract.NotlarEntry;
 import com.example.kadir.notdefteriuygulamasi.data.NotDefteriContract.KategoriEntry;
+import com.example.kadir.notdefteriuygulamasi.data.NotlarCursorAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,22 +40,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /*notOlustur();
-        notGuncelle();
-        notSil();
-        notlariOku();*/
-        //kategoriEkle();
-        //kategoriGoster();
-        //notEkle();
-        //notlariGuncelle();
-        notlariGoster();
-
         spinner = findViewById(R.id.spinner);
         lvNot = findViewById(R.id.lvNot);
+        Cursor cursor = notlariGoster();
 
 
-        String[] notIcerik = getResources().getStringArray(R.array.notlar);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,R.layout.not_tek_satir, R.id.tvNotIcerik, notIcerik);
+        NotlarCursorAdapter adapter = new NotlarCursorAdapter(this,cursor,false);
         lvNot.setAdapter(adapter);
 
         lvNot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -95,9 +86,6 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
         if (id == R.id.action_kategori){
             Intent intent = new Intent(this,KategoriActivity.class);
             startActivity(intent);
@@ -106,103 +94,69 @@ public class MainActivity extends AppCompatActivity {
 
         if(id == R.id.action_kategorileri_sil){
             kategorileriSil(TUM_KATEGORILER);
-            //kategoriGoster();
+            kategoriGoster();
             return true;
         }
 
         if(id == R.id.action_notlari_sil){
             notlariSil(TUM_NOTLAR);
-            //notlariGoster();
+            notlariGoster();
+            return true;
+        }
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        if(id == R.id.action_test_notlar){
+            testNotOlustur();
+            return true;
+        }
+
+        if(id == R.id.action_test_kategoriler){
+            testKategoriOlustur();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void notOlustur(){
+    private void testKategoriOlustur() {
 
-        DatabaseHelper helper = new DatabaseHelper(this);
-        SQLiteDatabase db = helper.getWritableDatabase();
+        Uri _uri = null;
+        for(int i=1;i<=5; i++){
 
-        String insertSorgusu = "INSERT INTO notlar ("
-                + NotDefteriContract.NotlarEntry.COLUMN_NOTE_ICERIK + ","
-                + NotDefteriContract.NotlarEntry.COLUMN_KATEGORI_ID + ","
-                + NotDefteriContract.NotlarEntry.COLUMN_OLUSTURMA_TARIHI + ","
-                + NotDefteriContract.NotlarEntry.COLUMN_BITIS_TARIHI + ","
-                + NotDefteriContract.NotlarEntry.COLUMN_YAPILDI + ")"
-                + " VALUES (\"SPORA GIT\", 1, \"07-05-2018\",\"\",0)";
-
-        db.execSQL(insertSorgusu); // Bu geriye bir şey döndürmediği için tavsiye edilmez.
-
-        ContentValues yenikayit = new ContentValues(); // Bu şekilde veri ekleme tavsiye edilir. Geriye long tipinde değer döndürür.
-        yenikayit.put(NotDefteriContract.NotlarEntry.COLUMN_NOTE_ICERIK,"OKULA GİT");
-        yenikayit.put(NotDefteriContract.NotlarEntry.COLUMN_KATEGORI_ID, 1);
-        yenikayit.put(NotDefteriContract.NotlarEntry.COLUMN_OLUSTURMA_TARIHI, "06-05-2018");
-        yenikayit.put(NotDefteriContract.NotlarEntry.COLUMN_BITIS_TARIHI, "09-05-2018");
-        yenikayit.put(NotDefteriContract.NotlarEntry.COLUMN_YAPILDI, 0);
-
-        long id = db.insert(NotDefteriContract.NotlarEntry.TABLE_NAME,null,yenikayit);
-
-
-    }
-
-    private void notlariOku() {
-        DatabaseHelper helper = new DatabaseHelper(this);
-        SQLiteDatabase db = helper.getReadableDatabase();
-
-        String[] projection = {NotlarEntry._ID,
-                            NotlarEntry.COLUMN_NOTE_ICERIK,
-                            NotlarEntry.COLUMN_OLUSTURMA_TARIHI,
-                            NotlarEntry.COLUMN_BITIS_TARIHI,
-                            NotlarEntry.COLUMN_YAPILDI,
-                            NotlarEntry.COLUMN_KATEGORI_ID};
-
-        String selection = NotlarEntry.COLUMN_KATEGORI_ID + " = ?";
-        String[] selectionArgs = {"1"};
-
-        Cursor c = db.query(NotlarEntry.TABLE_NAME,projection,selection,selectionArgs,null,null,null,null);
-
-        int i = c.getCount();
-        Toast.makeText(this, "Satır Sayısı : "+i, Toast.LENGTH_SHORT).show();
-
-        String tumNotlar = "";
-        while(c.moveToNext()){
-
-            for(int j=0; j<=4 ; j++){
-                tumNotlar += c.getString(j) + " - ";
-            }
-            tumNotlar += "\n";
+            ContentValues values = new ContentValues();
+            values.put(KategoriEntry.COLUMN_KATEGORI,"Kategori #"+i);
+            _uri = getContentResolver().insert(KategoriEntry.CONTENT_URI,values);
         }
-
-        Log.e("VERİLER : ",tumNotlar);
-        c.close();
-        db.close();
-    }
-
-    private void notGuncelle() {
-
-        DatabaseHelper helper = new DatabaseHelper(this);
-        SQLiteDatabase db = helper.getReadableDatabase();
-
-        ContentValues guncellenen = new ContentValues();
-        guncellenen.put(NotlarEntry.COLUMN_NOTE_ICERIK,"Not Güncellendi.");
-        String[] args = {"5"};
-
-        int etkilenenSatirSayisi = db.update(NotlarEntry.TABLE_NAME,guncellenen,NotlarEntry._ID + "= ?",args);
-        Toast.makeText(this, "Guncellenen Satır Sayısı : "+etkilenenSatirSayisi, Toast.LENGTH_SHORT).show();
-    }
-
-    private void notSil(){
-
-        DatabaseHelper helper = new DatabaseHelper(this);
-        SQLiteDatabase db = helper.getReadableDatabase();
-        int silinenSatirSayisi = 0;
-        for(int i=20; i<=28;i++){
-            String[] args = {String.valueOf(i)};
-            silinenSatirSayisi += db.delete(NotlarEntry.TABLE_NAME, NotlarEntry._ID + "= ?",args);
+        if(_uri != null){
+            Toast.makeText(this, "Test Kategoriler Eklendi. "+_uri, Toast.LENGTH_SHORT).show();
+            Log.e("KATEGORİLER"," "+_uri);
+            kategoriGoster();
         }
-        Toast.makeText(this, "Silinen Satır Sayısı = "+silinenSatirSayisi, Toast.LENGTH_SHORT).show();
     }
+
+    private void testNotOlustur() {
+        Uri _uri = null;
+
+        for(int i=1;i<=5;i++){
+
+            ContentValues values = new ContentValues();
+            values.put(NotlarEntry.COLUMN_NOTE_ICERIK,"Yeni Eklenen Not #"+i);
+            values.put(NotlarEntry.COLUMN_KATEGORI_ID,i);
+            values.put(NotlarEntry.COLUMN_OLUSTURMA_TARIHI,"16-05-2018");
+            values.put(NotlarEntry.COLUMN_BITIS_TARIHI,"18-05-2018");
+            values.put(NotlarEntry.COLUMN_YAPILDI,0);
+
+            _uri = getContentResolver().insert(NotlarEntry.CONTENT_URI,values);
+        }
+        if(_uri != null){
+            Toast.makeText(this, "Test Notları Eklendi. "+_uri, Toast.LENGTH_SHORT).show();
+            Log.e("NOTLAR"," "+_uri);
+            notlariGoster();
+        }
+    }
+
 
     private void kategoriEkle(){
 
@@ -229,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Toast.makeText(this, ""+tumKategoriler, Toast.LENGTH_SHORT).show();
+        Log.e("KATEGORİLER",""+tumKategoriler);
     }
 
     private void notEkle() {
@@ -246,11 +201,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void notlariGoster(){
+    private Cursor notlariGoster(){
         String[] projection={"notlar._id","notlar.notIcerik","notlar.olusturulmaTarihi","kategoriler._id","kategoriler.kategori"};
         Cursor cursor = getContentResolver().query(NotlarEntry.CONTENT_URI,projection,null,null,null);
 
-        String tumNotlar = "";
+        /*String tumNotlar = "";
         while(cursor.moveToNext()){
             for(int i=0;i<=4;i++){
                 tumNotlar = tumNotlar+cursor.getString(i)+" - ";
@@ -258,7 +213,9 @@ public class MainActivity extends AppCompatActivity {
             tumNotlar = tumNotlar+"\n";
         }
         Toast.makeText(this, ""+tumNotlar, Toast.LENGTH_SHORT).show();
-        Log.e("NOTLAR : ",""+tumNotlar);
+        Log.e("NOTLAR : ",""+tumNotlar);*/
+
+        return cursor;
     }
 
     private void notlariGuncelle(){
@@ -279,27 +236,30 @@ public class MainActivity extends AppCompatActivity {
     private void notlariSil(int silinecekID){
 
         String[] args = {String.valueOf(silinecekID)};
-
+        String selection="_id=?";
         if(silinecekID == TUM_NOTLAR){
             args = null;
+            selection = null;
         }
 
-        int silinenSatir = getContentResolver().delete(NotlarEntry.CONTENT_URI,"_id=?", args);
+        int silinenSatir = getContentResolver().delete(NotlarEntry.CONTENT_URI,selection, args);
         if(silinenSatir != 0){
-            Toast.makeText(this, "Satırlar Silindi : "+silinenSatir, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Not Silindi : "+silinenSatir, Toast.LENGTH_SHORT).show();
         }
     }
 
     private void kategorileriSil(int silinecekID){
 
         String[] args = {String.valueOf(silinecekID)};
+        String selection = "_id=?";
         if(silinecekID == TUM_KATEGORILER){
             args = null;
+            selection = null;
         }
 
-        int silinenSatir = getContentResolver().delete(KategoriEntry.CONTENT_URI,"_id = ?", args);
+        int silinenSatir = getContentResolver().delete(KategoriEntry.CONTENT_URI,selection, args);
         if(silinenSatir != 0){
-            Toast.makeText(this, "Satırlar Silindi : "+silinenSatir, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Kategori Silindi : "+silinenSatir, Toast.LENGTH_SHORT).show();
         }
     }
 }

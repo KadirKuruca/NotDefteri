@@ -3,6 +3,7 @@ package com.example.kadir.notdefteriuygulamasi.data;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 
 import com.example.kadir.notdefteriuygulamasi.data.NotDefteriContract.KategoriEntry;
 import com.example.kadir.notdefteriuygulamasi.data.NotDefteriContract.NotlarEntry;
@@ -40,6 +41,14 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         db.execSQL(TABLE_KATEGORILER_CREATE);
         db.execSQL(TABLE_NOTLAR_CREATE);
 
+    }
+
+    @Override
+    public void onConfigure(SQLiteDatabase db) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            db.setForeignKeyConstraintsEnabled(true);
+        }
     }
 
     @Override

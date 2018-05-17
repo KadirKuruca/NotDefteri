@@ -21,8 +21,20 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_test_notlar"
+        android:orderInCategory="103"
+        android:title="@string/random_notlar_olustur"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_test_kategoriler"
+        android:orderInCategory="102"
+        android:title="@string/random_kategori_olustur"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
+        android:orderInCategory="200"
         android:title="@string/action_settings"
         app:showAsAction="never" />
 </menu>

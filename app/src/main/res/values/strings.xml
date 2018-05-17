@@ -4,6 +4,8 @@
     <string name="kategoriler">Kategoriler</string>
     <string name="t_m_kategorileri_sil">Tüm Kategorileri Sil</string>
     <string name="tum_notlar_sil">Tüm Notları Sil</string>
+    <string name="random_notlar_olustur">Random Notlar Oluştur</string>
+    <string name="random_kategori_olustur">Random Kategori Oluştur</string>
     <string-array name="kategoriler">
         <item>Genel</item>
         <item>iş</item>
