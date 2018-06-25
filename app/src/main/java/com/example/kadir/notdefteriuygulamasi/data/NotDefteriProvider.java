@@ -49,11 +49,11 @@ public class NotDefteriProvider extends ContentProvider {
             case URICODE_NOTLAR:
                 builder = new SQLiteQueryBuilder();
                 builder.setTables(tabloBirlestir);
-                cursor = builder.query(db,projection,selection,selectionArgs,null,null,null);
+                cursor = builder.query(db,projection,selection,selectionArgs,null,null,sortOrder);
                 break;
 
             case URICODE_KATEGORILER:
-                cursor = db.query(NotDefteriContract.KategoriEntry.TABLE_NAME,projection,selection,selectionArgs,null,null,null);
+                cursor = db.query(NotDefteriContract.KategoriEntry.TABLE_NAME,projection,selection,selectionArgs,null,null,sortOrder);
                 break;
             default:
                 throw new IllegalArgumentException("Bilinmeyen Uri : "+uri);

@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void testKategoriOlustur() {
 
         Uri _uri = null;
-        for(int i=1;i<=500; i++){
+        for(int i=1;i<=10; i++){
 
             ContentValues values = new ContentValues();
             values.put(KategoriEntry.COLUMN_KATEGORI,"Kategori #"+i);
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void testNotOlustur() {
         Uri _uri = null;
 
-        for(int i=1; i<=500;i++){
+        for(int i=1; i<=10;i++){
 
             ContentValues values = new ContentValues();
             values.put(NotlarEntry.COLUMN_NOTE_ICERIK,"Yeni Eklenen Not #"+i);
