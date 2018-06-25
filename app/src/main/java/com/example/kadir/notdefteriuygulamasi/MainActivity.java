@@ -1,7 +1,10 @@
 package com.example.kadir.notdefteriuygulamasi;
 
+import android.app.LoaderManager;
 import android.content.ContentValues;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -24,14 +27,16 @@ import com.example.kadir.notdefteriuygulamasi.data.DatabaseHelper;
 import com.example.kadir.notdefteriuygulamasi.data.NotDefteriContract;
 import com.example.kadir.notdefteriuygulamasi.data.NotDefteriContract.NotlarEntry;
 import com.example.kadir.notdefteriuygulamasi.data.NotDefteriContract.KategoriEntry;
+import com.example.kadir.notdefteriuygulamasi.data.NotDefteriQueryHandler;
 import com.example.kadir.notdefteriuygulamasi.data.NotlarCursorAdapter;
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
     Spinner spinner;
     ListView lvNot;
     private static final int TUM_NOTLAR = -1;
     private static final int TUM_KATEGORILER = -1;
+    NotlarCursorAdapter adapter;
+    Cursor cursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +47,15 @@ public class MainActivity extends AppCompatActivity {
 
         spinner = findViewById(R.id.spinner);
         lvNot = findViewById(R.id.lvNot);
+
+
+        getLoaderManager().initLoader(111,null,this); //onCreateLoader ı tetikler.
+
+
         Cursor cursor = notlariGoster();
 
 
-        NotlarCursorAdapter adapter = new NotlarCursorAdapter(this,cursor,false);
+        adapter = new NotlarCursorAdapter(this,cursor,false);
         lvNot.setAdapter(adapter);
 
         lvNot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -123,11 +133,13 @@ public class MainActivity extends AppCompatActivity {
     private void testKategoriOlustur() {
 
         Uri _uri = null;
-        for(int i=1;i<=5; i++){
+        for(int i=1;i<=500; i++){
 
             ContentValues values = new ContentValues();
             values.put(KategoriEntry.COLUMN_KATEGORI,"Kategori #"+i);
-            _uri = getContentResolver().insert(KategoriEntry.CONTENT_URI,values);
+            //_uri = getContentResolver().insert(KategoriEntry.CONTENT_URI,values);
+            NotDefteriQueryHandler handler = new NotDefteriQueryHandler(this.getContentResolver());
+            handler.startInsert(2,null,KategoriEntry.CONTENT_URI,values);
         }
         if(_uri != null){
             Toast.makeText(this, "Test Kategoriler Eklendi. "+_uri, Toast.LENGTH_SHORT).show();
@@ -139,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
     private void testNotOlustur() {
         Uri _uri = null;
 
-        for(int i=1;i<=5;i++){
+        for(int i=1; i<=500;i++){
 
             ContentValues values = new ContentValues();
             values.put(NotlarEntry.COLUMN_NOTE_ICERIK,"Yeni Eklenen Not #"+i);
@@ -148,7 +160,9 @@ public class MainActivity extends AppCompatActivity {
             values.put(NotlarEntry.COLUMN_BITIS_TARIHI,"18-05-2018");
             values.put(NotlarEntry.COLUMN_YAPILDI,0);
 
-            _uri = getContentResolver().insert(NotlarEntry.CONTENT_URI,values);
+            //_uri = getContentResolver().insert(NotlarEntry.CONTENT_URI,values);
+            NotDefteriQueryHandler handler = new NotDefteriQueryHandler(this.getContentResolver());
+            handler.startInsert(1,null,NotlarEntry.CONTENT_URI,values);
         }
         if(_uri != null){
             Toast.makeText(this, "Test Notları Eklendi. "+_uri, Toast.LENGTH_SHORT).show();
@@ -242,10 +256,15 @@ public class MainActivity extends AppCompatActivity {
             selection = null;
         }
 
-        int silinenSatir = getContentResolver().delete(NotlarEntry.CONTENT_URI,selection, args);
+        /*int silinenSatir = getContentResolver().delete(NotlarEntry.CONTENT_URI,selection, args);
         if(silinenSatir != 0){
             Toast.makeText(this, "Not Silindi : "+silinenSatir, Toast.LENGTH_SHORT).show();
-        }
+        }*/
+
+        NotDefteriQueryHandler handler = new NotDefteriQueryHandler(this.getContentResolver());
+        handler.startDelete(1,null,NotlarEntry.CONTENT_URI,selection,args);
+        Toast.makeText(this, "Not Silindi!", Toast.LENGTH_SHORT).show();
+
     }
 
     private void kategorileriSil(int silinecekID){
@@ -257,9 +276,33 @@ public class MainActivity extends AppCompatActivity {
             selection = null;
         }
 
-        int silinenSatir = getContentResolver().delete(KategoriEntry.CONTENT_URI,selection, args);
+        /*int silinenSatir = getContentResolver().delete(KategoriEntry.CONTENT_URI,selection, args);
         if(silinenSatir != 0){
             Toast.makeText(this, "Kategori Silindi : "+silinenSatir, Toast.LENGTH_SHORT).show();
+        }*/
+
+        NotDefteriQueryHandler handler = new NotDefteriQueryHandler(this.getContentResolver());
+        handler.startDelete(2,null,KategoriEntry.CONTENT_URI,selection,args);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+
+        if(id == 111){
+
+            String[] projection={"notlar._id","notlar.notIcerik","notlar.olusturulmaTarihi","kategoriler._id","kategoriler.kategori"};
+            return new CursorLoader(this,NotlarEntry.CONTENT_URI,projection,null,null,null);
         }
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        adapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        adapter.swapCursor(null);
     }
 }

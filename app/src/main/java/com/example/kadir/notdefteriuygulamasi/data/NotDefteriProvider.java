@@ -59,6 +59,7 @@ public class NotDefteriProvider extends ContentProvider {
                 throw new IllegalArgumentException("Bilinmeyen Uri : "+uri);
         }
 
+        cursor.setNotificationUri(getContext().getContentResolver(),uri); //Cursor a gelen Uri de değişiklikleri dinler.
         return cursor;
     }
 
@@ -118,7 +119,7 @@ public class NotDefteriProvider extends ContentProvider {
             Log.e("NotDefteriProvider","INSERT HATA"+uri);
             return null;
         }
-
+        getContext().getContentResolver().notifyChange(uri,null);
         return ContentUris.withAppendedId(uri,id);
     }
 
@@ -130,6 +131,7 @@ public class NotDefteriProvider extends ContentProvider {
             Log.e("HATA","UPDATE HATASI");
             return -1;
         }
+        getContext().getContentResolver().notifyChange(uri,null); //Değişiklikleri ekleme çıkarma güncelleme işlemleri için belirtiyoruz.
         return id;
     }
 
@@ -140,6 +142,7 @@ public class NotDefteriProvider extends ContentProvider {
             Log.e("HATA","DELETE HATASI");
             return -1;
         }
+        getContext().getContentResolver().notifyChange(uri,null);
         return id;
     }
 }
